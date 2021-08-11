@@ -1,14 +1,15 @@
 import Tile from '../../tile/tile';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import './checkerboard.css';
 import { RootState } from '../../store';
-import { CheckerboardState } from '../../store/checkerboardReducer';
+import {Piece} from "../../type";
+import * as React from "react";
 
 const hori:any = ["1","2","3","4","5","6","7","8"];
 const verti:any = ["a","b","c","d","e","f","g","h"];
 
 const Checkerboard = () => {
-    const pieces = useSelector<RootState,CheckerboardState>(state => state.checkerboard)
+    const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const board = [];
     console.log("Pieces",pieces);
     for(let j = verti.length-1;j>=0;j--){
@@ -17,13 +18,13 @@ const Checkerboard = () => {
             let image = undefined;
 
             if(pieces){
-                pieces.forEach((piece:any)=> {
+                for(const piece of pieces) {
                     if(piece.x===i && piece.y===j){
                         image=piece.image;
                     }
-                });
+                }
             }
-            board.push(<Tile key={`${j},${i}`} image={image}number={number} />)
+            board.push(<Tile key={`${j},${i}`} image={image} number={number} />)
         }
     }
     return(
@@ -31,6 +32,6 @@ const Checkerboard = () => {
             {board}
         </div>
     )
-}
+};
 
 export default Checkerboard;
