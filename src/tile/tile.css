@@ -1,0 +1,38 @@
+.tile{
+    display: grid;
+    place-content: center;
+    width: 80px;
+    height: 80px;
+}
+
+.black-tile{
+    background-color:rgb(53, 58, 64);
+
+}
+.white-tile{
+    background-color:rgb(235, 217, 101);
+}
+.tile img{
+    width: 60px;
+}
+.piece{
+    width:80px;
+    height: 80px;
+    background-repeat: no-repeat;
+    background-size: 60px;
+    background-position: center;
+}
+.piece:hover{
+    cursor: grab;
+}
+.piece:active{
+    cursor: grabbing;
+    /* background-color: white; */
+}
+.activePiece:active{
+    /* cursor: grabbing; */
+    background-color: white;
+}
+.movements{
+    background-color: purple;
+}

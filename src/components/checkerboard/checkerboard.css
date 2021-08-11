@@ -1,0 +1,21 @@
+#checkerBoard{
+    display: grid;
+    grid-template-columns: repeat(8,80px);
+    grid-template-rows: repeat(8,80px);
+    height: 640px;
+    width: 640px;
+    background-color: black;
+}
+.tile{
+    display: grid;
+    place-content: center;
+    width: 80px;
+    height: 80px;
+}
+.black-tile{
+    background-color:rgb(53, 58, 64);
+
+}
+.white-tile{
+    background-color:rgb(235, 217, 101);
+}
