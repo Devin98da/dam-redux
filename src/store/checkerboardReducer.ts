@@ -35,8 +35,8 @@ for(let i=0;i<8;i++){
 export interface CheckerboardState{
     pieces:Piece[]
 }
-const initialState = {
-    pieces:[]
+const initialState:CheckerboardState = {
+    pieces:[]=initialBoardState
 }
 // type Action = {type:"ADD_Number",payload:number};
 

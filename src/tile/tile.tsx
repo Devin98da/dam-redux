@@ -1,7 +1,7 @@
 import React from 'react'
 import './tile.css';
-import { useSelector,useDispatch } from 'react-redux';
-import { TileState } from '../store/tileReducer';
+// import { useSelector,useDispatch } from 'react-redux';
+// import { TileState } from '../store/tileReducer';
 
 interface Props {
     image?: string;
@@ -10,8 +10,8 @@ interface Props {
   }
   
   const Tile=({ number, image, }: Props)=> {
-    const name = useSelector<TileState,TileState["number"]>(state => state.number)
-    const dispatch = useDispatch();
+    // const name = useSelector<TileState,TileState["number"]>(state => state.number)
+    // const dispatch = useDispatch();
 
     if (number % 2 === 0) {
       return (
