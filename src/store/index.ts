@@ -1,8 +1,11 @@
 import {combineReducers} from 'redux';
-import CheckerboardReducer from './checkerboardReducer';
+import CheckerPiecesReducer from './checkerboardReducer';
+import HighlightsReducer from './highlightsReducer';
+
 
 const reducer = combineReducers({
-    checkerboard:CheckerboardReducer
+    checkerboard:CheckerPiecesReducer,
+    highlights:HighlightsReducer
 });
 
 export default reducer;

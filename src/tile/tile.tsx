@@ -6,26 +6,27 @@ import './tile.css';
 interface Props {
     image?: string;
     number: number;
-
+    movementsPoints:boolean;
   }
   
-  const Tile=({ number, image, }: Props)=> {
-    // const name = useSelector<TileState,TileState["number"]>(state => state.number)
+     // const name = useSelector<TileState,TileState["number"]>(state => state.number)
     // const dispatch = useDispatch();
 
-    if (number % 2 === 0) {
-      return (
-        <div className={`tile black-tile `}>
-            {image && <div style={{backgroundImage: `url(${image})`}} className="piece" ></div>}
-        </div>
-      );
-    } else {
-      return (
-        <div className="tile white-tile">
-              {image && <div style={{backgroundImage: `url(${image})`}} className="piece"></div>}
-  
-        </div>
-      );
+    const Tile=({ number, image,movementsPoints }: Props)=> {
+
+      if (number % 2 === 0) {
+        return (
+          <div className={`tile black-tile  ${movementsPoints?'movements':null}`}>
+              {image && <div style={{backgroundImage: `url(${image})`}} className="piece" ></div>}
+          </div>
+        );
+      } else {
+        return (
+          <div className="tile white-tile">
+                {image && <div style={{backgroundImage: `url(${image})`}} className="piece"></div>}
+    
+          </div>
+        );
+      }
     }
-  }
-  export default Tile;
+    export default Tile;
