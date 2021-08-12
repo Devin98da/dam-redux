@@ -30,3 +30,4 @@ interface Props {
       }
     }
     export default Tile;
+
