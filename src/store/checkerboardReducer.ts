@@ -1,4 +1,5 @@
 import {Piece,PlayerType,PieceTypes} from '../type';
+import Referee from '../referee/Referee';
 
 const initialBoardState:Piece[]=[];
 
@@ -8,16 +9,12 @@ for(let i=0;i<8;i++){
 
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:7,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*2+'a')});
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:5,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*5+'b')});
-
-        initialBoardState.push({image:'/Images/red_circle.png',x:i,y:7,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*2+'a')});
-        initialBoardState.push({image:'/Images/red_circle.png',x:i,y:5,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*5+'b')});
     }
     
 }
 for(let i=0;i<8;i++){
     if(i%2===0){
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:6,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*6+'c')});
-        initialBoardState.push({image:'/Images/red_circle.png',x:i,y:6,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*6+'c')});
     }
     
 }
@@ -26,15 +23,12 @@ for(let i=0;i<8;i++){
     if(i%2===0){
         initialBoardState.push({image:'Images/blue_circle.png',x:i,y:2,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*8+'d')});
         initialBoardState.push({image:'Images/blue_circle.png',x:i,y:0,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*9+'e')});
-        initialBoardState.push({image:'/Images/blue_circle.png',x:i,y:2,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*8+'d')});
-        initialBoardState.push({image:'/Images/blue_circle.png',x:i,y:0,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*9+'e')});
     }
     
 }
 for(let i=0;i<8;i++){
     if(i%2!==0){
         initialBoardState.push({image:'Images/blue_circle.png',x:i,y:1,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*10+'f')});
-        initialBoardState.push({image:'/Images/blue_circle.png',x:i,y:1,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*10+'f')});
     }
     
 }
@@ -45,13 +39,34 @@ export interface PiecesState{
 const initialState = {
     pieces: initialBoardState
 }
-// type Action = {type:"ADD_Number",payload:number};
 
+type Action = {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement}};
 
-// type Action = {type:"ADD_Number",payload:number};
+const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
+    const drop = action.payload;
 
-const CheckerboardReducer = (state:PiecesState=initialState): PiecesState => {
-    return {...state, pieces:initialBoardState};
+    switch(action.type){
+        case "DROP_PIECE":
+            const pieces = drop.pieces.map((p:Piece)=>{
+                if(p.x===drop.gridX && p.y===drop.gridY){
+                    const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,p.type,p.player,drop.pieces,drop.currentPiece);
+                    if(validMove){
+                        p.x=drop.x;
+                        p.y=drop.y;
+                    }else{
+                        drop.activePiece.style.position='relative';
+                        drop.activePiece.style.removeProperty('top');
+                        drop.activePiece.style.removeProperty('left');
+                    }
+                }
+                return p;
+            })
+            return {...state,pieces:pieces};
+
+        default:
+            return {...state, pieces:initialBoardState};
+    }
+
 };
 
 export default CheckerboardReducer;

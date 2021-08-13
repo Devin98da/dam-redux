@@ -16,7 +16,7 @@ interface Props {
 
       if (number % 2 === 0) {
         return (
-          <div className={`tile black-tile  ${movementsPoints?'movements':null}`}>
+          <div className={`tile ${movementsPoints?'movements':null} black-tile  }`}>
               {image && <div style={{backgroundImage: `url(${image})`}} className="piece" ></div>}
           </div>
         );

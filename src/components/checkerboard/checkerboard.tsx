@@ -13,21 +13,16 @@ const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions)
     
-    console.log(highlights);
     const dispatch = useDispatch();
 
-
     const checkerBoardRef = useRef<HTMLDivElement>(null);
-    const [gridX,setGridX] = useState(0);
-    const [gridY,setGridY] = useState(0);
-    // const [activePiece,setActivePiece] = useState<HTMLElement|null>(null);
-       
-    const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
-    // console.log("CurrentPiece",currentPiece);
-    // console.log("Pieces",pieces);
+    const [gridX,setGridX] = useState<number|null>(null);
+    const [gridY,setGridY] = useState<number|null>(null);
+    const [activePiece,setActivePiece] = useState<HTMLElement|null>(null);
 
     //!Making positions highlights
-    const makeHighlights = () => {
+    const makeHighlights = (gridX:number,gridY:number) => {
+        const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
         dispatch({type:"MAKE_HIGHLIGHTS",payload:{currentPiece,pieces}});
     }
 
@@ -37,24 +32,64 @@ const Checkerboard = () => {
         const checkerBoard = checkerBoardRef.current;
 
         if(element.classList.contains("piece") && checkerBoard){
-       
-            setGridX(Math.floor((e.clientX - checkerBoard.offsetLeft)/80));
-            setGridY(Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80)));
-
+            const gridX=(Math.floor((e.clientX - checkerBoard.offsetLeft)/80));
+            const  gridY = (Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80)));
+            setGridX(gridX);
+            setGridY(gridY);
             const x = e.clientX-50;
             const y = e.clientY-50;
             element.style.position = "absolute";
             element.style.left=`${x}px`;
             element.style.top=`${y}px`;
             
-            makeHighlights();
-
-            // setActivePiece(element);
-
+            makeHighlights(gridX,gridY);
+            setActivePiece(element);
         }
     };
-  
 
+  //!Moving a Piece
+    const movePiece=(e:React.MouseEvent)=>{
+    const checkerBoard = checkerBoardRef.current;
+
+        if(activePiece && checkerBoard){
+            const minX = checkerBoard.offsetLeft;
+            const minY = checkerBoard.offsetTop;
+            const maxX = checkerBoard.offsetLeft + checkerBoard.clientWidth - 75;
+            const maxY = checkerBoard.offsetTop + checkerBoard.clientHeight - 75;
+            const x = e.clientX - 50;
+            const y = e.clientY - 50;
+            activePiece.style.position = "absolute";
+       
+            if(x<minX){
+                activePiece.style.left=`${minX}px`;
+            }else if(x>maxX){
+                activePiece.style.left=`${maxX}px`;
+            }else{
+                activePiece.style.left=`${x}px`;
+            }
+
+            if(y<minY){
+                activePiece.style.top=`${minY}px`;
+            }else if(y>maxY){
+                activePiece.style.top=`${maxY}px`;
+            }else{
+                activePiece.style.top=`${y}px`;
+            }
+        }
+    }
+    //!Dropping piece
+    const dropPiece = (e:React.MouseEvent) => {
+        const checkerBoard = checkerBoardRef.current;
+    
+        const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
+        if(activePiece && checkerBoard ){
+            const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
+            const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
+            dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece}})
+        }
+        setActivePiece(null);
+   
+    }
     const board = [];
 
     for(let j = verti.length-1;j>=0;j--){
@@ -72,13 +107,19 @@ const Checkerboard = () => {
                     const posiOne = highlights.find((el:any)=>el[0]===i && el[1]===j );
                     a = (posiOne )?true:false;
                 }
-
-            board.push(<Tile key={`${j},${i}`} image={image}number={number} movementsPoints={a}/>)
+                const exPiece = pieces.find(p=>p.x===i && p.y===j);
+                if(exPiece  ){
+                    a=false;
+                }
+                
+            board.push(<Tile key={`${j},${i}`} image={image} number={number} movementsPoints={a}/>)
         }
     }
     return(
         <div id="checkerBoard" 
-            onMouseDown={e=>{grabPiece(e)}}
+            onMouseDown={e=>grabPiece(e)}
+            onMouseMove={e=>movePiece(e)} 
+            onMouseUp = {e=>dropPiece(e)}
             ref={checkerBoardRef}
         >
             {board}

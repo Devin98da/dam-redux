@@ -4,7 +4,9 @@
     width: 80px;
     height: 80px;
 }
-
+.movements{
+    background-color: purple !important;
+}
 .black-tile{
     background-color:rgb(53, 58, 64);
 
@@ -33,6 +35,8 @@
     /* cursor: grabbing; */
     background-color: white;
 }
-.movements{
-    background-color: purple;
-}
+
+
+
+
+
