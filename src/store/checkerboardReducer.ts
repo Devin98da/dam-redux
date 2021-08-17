@@ -40,28 +40,50 @@ const initialState = {
     pieces: initialBoardState
 }
 
-type Action = {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement}};
+type Action = {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[]}};
 
 const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
     const drop = action.payload;
-
+  
     switch(action.type){
         case "DROP_PIECE":
-            const pieces = drop.pieces.map((p:Piece)=>{
-                if(p.x===drop.gridX && p.y===drop.gridY){
-                    const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,p.type,p.player,drop.pieces,drop.currentPiece);
-                    if(validMove){
-                        p.x=drop.x;
-                        p.y=drop.y;
-                    }else{
-                        drop.activePiece.style.position='relative';
-                        drop.activePiece.style.removeProperty('top');
-                        drop.activePiece.style.removeProperty('left');
-                    }
-                }
-                return p;
-            })
-            return {...state,pieces:pieces};
+            // const pieces = drop.pieces.map((p:Piece)=>{
+            //     if(p.x===drop.gridX && p.y===drop.gridY){
+            //         const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,p.type,p.player,drop.pieces,drop.currentPiece,drop.nearPieces);
+            //         if(validMove){
+            //             p.x=drop.x;
+            //             p.y=drop.y;
+            //         }else{
+            //             drop.activePiece.style.position='relative';
+            //             drop.activePiece.style.removeProperty('top');
+            //             drop.activePiece.style.removeProperty('left');
+            //         }
+            //     }
+            //     return p;
+            // })
+            // return {...state,pieces:pieces};
+            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces);
+            let updatedPieces:Piece[]=[];
+            if(validMove){
+                    updatedPieces = drop.pieces.reduce((results,piece)=>{
+                        const nearPiece = drop.nearPieces.find((ele:any)=>ele && ele.id===piece.id &&ele.player!==drop.currentPiece.player && Math.abs(drop.x-drop.currentPiece.x)!==1);
+                        if(piece.x===drop.currentPiece.x && piece.y===drop.currentPiece.y ){
+                            piece.x=drop.x;
+                            piece.y=drop.y;
+                            results.push(piece);
+                        }
+                        else if(!(nearPiece )){
+                            results.push(piece);
+                        }
+                        return results;
+                    },[] as Piece[])
+            }else{
+                drop.activePiece.style.position='relative';
+                drop.activePiece.style.removeProperty('top');
+                drop.activePiece.style.removeProperty('left');
+            }
+            
+            return {...state,pieces:updatedPieces};
 
         default:
             return {...state, pieces:initialBoardState};

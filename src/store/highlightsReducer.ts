@@ -21,16 +21,17 @@ const HighlightsReducer = (state:HighlightsState=initialHighlightsState,action:A
             if(grabPiece){
                 const checkerDirection = (grabPiece?.player===PlayerType.BLUE)?1:-1;
                 const mPositions = [[-2,2],[2,2],[-2,-2],[2,-2],[-1,checkerDirection],[1,checkerDirection]];   
-                
+            
                 for(let i=0;i<mPositions.length;i++){
                 let  a:number[] = [mPositions[i][0]+grabPiece.x,mPositions[i][1]+grabPiece.y];
                     // const opoPiece = action.payload.pieces.find((p:any)=>{
                         
                     // })
+                    
                     movingPositions.push(a);
                 }
             }
-
+            
             return {...state,positions:movingPositions}            
         default:
             return state;

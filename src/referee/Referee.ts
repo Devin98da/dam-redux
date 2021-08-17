@@ -11,7 +11,7 @@ const CanMoveOnAnotherChecker = (x:number,y:number,boardstate:Piece[]):boolean =
     }
 }
 
-const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece) => {
+const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece,nearPieces:Piece[]) => {
     
     if(currentPiece){
         // if(previousPlayer!==currentPiece?.player){
@@ -22,39 +22,29 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                          if(!CanMoveOnAnotherChecker(x,y,boardstate) ){     
                             return true;
                     }
-                    // }else if(x-px===2 && y-py===2 && topRightAttack){
-                    }else if(x-px===2 && y-py===2 ){
+                    }else if(x-px===2 && y-py===2 && nearPieces[1]&& nearPieces[1].player!==currentPiece.player){
 
                         console.log("rihht attack");
     
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
-                                // setTopRightAttack(false);
-                                // setPreviousPlayer(null);
                                 return true;
                             }
-                    // }else if(x-px===-2 && y-py===2 && topLefttAttack){
-                    }else if(x-px===-2 && y-py===2 ){
+                    }else if(x-px===-2 && y-py===2 && nearPieces[0]&& nearPieces[0].player!==currentPiece.player){
 
                         console.log("left attack");
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
-                                // setTopLeftAttack(false);
                                 return true;
                             }
-                    // }else if(x-px===-2 && y-py===-2 && bottomLeftAttack){
-                    }else if(x-px===-2 && y-py===-2 ){
+                    }else if(x-px===-2 && y-py===-2 && nearPieces[2]&& nearPieces[2].player!==currentPiece.player){
 
                         console.log("bottom left attack");
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
-                                // setBottomLeftAttack(false);
                                 return true;
                             }
-                    // }else if(x-px===2 && y-py===-2 && bottomRightAttack){
-                    }else if(x-px===2 && y-py===-2 ){
-
+                    }else if(x-px===2 && y-py===-2 && nearPieces[3]&& nearPieces[3].player!==currentPiece.player){
                         console.log("bottom right attack");
     
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
-                                // setBottomRightAttack(false);
                                 return true;
                             }
                     }

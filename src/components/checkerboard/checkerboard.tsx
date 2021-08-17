@@ -5,6 +5,7 @@ import './checkerboard.css';
 import { RootState } from '../../store';
 import {Piece,PlayerType,PieceTypes, Position} from '../../type';
 import { HighlightsState } from '../../store/highlightsReducer';
+import { PiecesState } from '../../store/checkerboardReducer';
 
 const hori:any = ["1","2","3","4","5","6","7","8"];
 const verti:any = ["a","b","c","d","e","f","g","h"];
@@ -12,20 +13,44 @@ const verti:any = ["a","b","c","d","e","f","g","h"];
 const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions)
-    
+    console.log(pieces);
     const dispatch = useDispatch();
 
     const checkerBoardRef = useRef<HTMLDivElement>(null);
     const [gridX,setGridX] = useState<number|null>(null);
     const [gridY,setGridY] = useState<number|null>(null);
+    const [nearPieces,setNearPieces] = useState<any>([]);
     const [activePiece,setActivePiece] = useState<HTMLElement|null>(null);
-
+    //!Checke near pieces
+    const NearPieces = (currentPiece:Piece) => {
+        const checkerDirection = (currentPiece?.player===PlayerType.BLUE)?1:-1;
+    
+        const fPieces = [[-1,1],[1,1],[-1,-1],[1,-1]];
+        let nearPiecesPositions:any = [];
+        let a:number[];
+        let nPieces = [];
+        let p;
+        for(let i=0;i<4;i++){
+                if(currentPiece){
+                a = [fPieces[i][0]+currentPiece.x,fPieces[i][1]+currentPiece.y];
+                nearPiecesPositions.push(a);
+                p = pieces.find(p=>p.x===nearPiecesPositions[i][0] && p.y===nearPiecesPositions[i][1]);
+                nPieces.push(p);
+                }
+            }
+        // console.log("Near Pieces",nPieces);
+        if(nPieces){
+            setNearPieces(nPieces);
+        }
+    }
     //!Making positions highlights
     const makeHighlights = (gridX:number,gridY:number) => {
         const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
         dispatch({type:"MAKE_HIGHLIGHTS",payload:{currentPiece,pieces}});
+        if(currentPiece){
+            NearPieces(currentPiece);
+        }
     }
-
     //!Grabbing piece
     const grabPiece=(e:React.MouseEvent)=>{
         const element = e.target as HTMLElement;
@@ -85,7 +110,7 @@ const Checkerboard = () => {
         if(activePiece && checkerBoard ){
             const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
             const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
-            dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece}})
+            dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces}})
         }
         setActivePiece(null);
    
