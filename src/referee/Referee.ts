@@ -50,8 +50,38 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                     }
                 }
                 return false;
+            }else{
+                if(py<=8 && py>=0){
+                    for(let i=1;i<8;i++){
+                        // if(x > grabPosition.x && y > grabPosition.y) {
+                            let topRightPassedPosition = {x:currentPiece.x+i , y:currentPiece.y+i};
+                            // if(topRightPassedPosition){
+                            //     console.log(topRightPassedPosition.x,topRightPassedPosition.y);
+                            // }
+                            let topRightPieces = boardstate.find(p=>(p.x===topRightPassedPosition.x && p.y===topRightPassedPosition.y))
+                            // let topRightPieces = boardstate.filter(p=>(p.x===topRightPassedPosition.x && p.y===topRightPassedPosition.y))
+                            // setQueenPieces(topRightPieces);
+                            // const exMovPieces=[];
+                            // exMovPieces.push(topRightPieces);
+                            console.log(topRightPieces);
+                            // console.log(queenPieces);
+                            
+                            // console.log(exMovPieces);
+                            // if(topRightPieces){
+                                // if(topRightPieces?.player===previousPlayer){
+                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
+                                        if(!CanMoveOnAnotherChecker(x,y,boardstate) ){     
+                                            return true;
+                                        
+                                    }
+                                // }
+                            }
+                        // }
+                    }
+                }
             }
     }
 }
 
 export default Referee;
+

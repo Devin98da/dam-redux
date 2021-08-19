@@ -10,7 +10,7 @@ const initialHighlightsState = {
 }
 
 
-type Action = {type:"MAKE_HIGHLIGHTS",payload:{currentPiece:Piece,pieces:Piece[]}}
+type Action = {type:"MAKE_HIGHLIGHTS",payload:{currentPiece:Piece,pieces:Piece[],nearPieces:Piece[]}}
 
 const HighlightsReducer = (state:HighlightsState=initialHighlightsState,action:Action) => {
     

@@ -6,13 +6,16 @@ import { RootState } from '../../store';
 import {Piece,PlayerType,PieceTypes, Position} from '../../type';
 import { HighlightsState } from '../../store/highlightsReducer';
 import { PiecesState } from '../../store/checkerboardReducer';
+ import { WinnerState } from '../../store/winner';
 
 const hori:any = ["1","2","3","4","5","6","7","8"];
 const verti:any = ["a","b","c","d","e","f","g","h"];
 
 const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
-    const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions)
+    const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions);
+    const winner = useSelector<RootState,WinnerState>(state => state.winner);
+    console.log(winner);
     console.log(pieces);
     const dispatch = useDispatch();
 
@@ -46,7 +49,7 @@ const Checkerboard = () => {
     //!Making positions highlights
     const makeHighlights = (gridX:number,gridY:number) => {
         const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
-        dispatch({type:"MAKE_HIGHLIGHTS",payload:{currentPiece,pieces}});
+        dispatch({type:"MAKE_HIGHLIGHTS",payload:{currentPiece,pieces,nearPieces}});
         if(currentPiece){
             NearPieces(currentPiece);
         }
@@ -111,9 +114,10 @@ const Checkerboard = () => {
             const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
             const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
             dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces}})
+            dispatch({type:"CHOOSE_WINNER",payload:pieces});
         }
         setActivePiece(null);
-   
+        console.log("Winner",winner);
     }
     const board = [];
 
