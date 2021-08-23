@@ -40,14 +40,18 @@ const initialState = {
     pieces: initialBoardState
 }
 
-type Action = {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[]}};
+interface DropAction  {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[]}};
+interface ResetAction {type:"RESET_PIECES"};
+
+type Action = DropAction | ResetAction;
 
 const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
-    const drop = action.payload;
     let updatedPieces:Piece[]=initialBoardState;
   
     switch(action.type){
+        
         case "DROP_PIECE":
+            const drop = action.payload;
             const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces);
             // let updatedPieces:Piece[]=initialBoardState;
             if(validMove){
@@ -78,7 +82,10 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                 drop.activePiece.style.removeProperty('left');
                 return {...state,pieces:updatedPieces};
             }
+        case "RESET_PIECES":
+            console.log("Reset checkerBoardReducer.tsx");
 
+            return {...state,pieces:initialBoardState};
         default:
             return {...state};
     }

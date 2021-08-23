@@ -9,23 +9,21 @@ const InitialWinnerState = {
 type Action = {type:"CHOOSE_WINNER",payload:{pieces:Piece[]}}
 
 const WinnerReducer = (state:WinnerState=InitialWinnerState,action:Action) => {
+    
     let winner:string='';
     switch(action.type){
         case "CHOOSE_WINNER":
             if(action.payload.pieces){
                 const blues = action.payload.pieces.filter((p:any)=>p.player===PlayerType.BLUE);
-            const reds = action.payload.pieces.filter((p:any)=>p.player===PlayerType.RED);
-            if(blues.length===0){
-                console.log("Red player won");
-                winner="Red";
-
-            }else if(reds.length===0){
-                console.log("Blue player won");
-                winner="Blue";
+                const reds = action.payload.pieces.filter((p:any)=>p.player===PlayerType.RED);
+                if(blues.length===0){
+                    console.log("Red player won");
+                    winner="Red"
+                }else if(reds.length===0){
+                    console.log("Blue player won");
+                    winner="Blue";
+                }
             }
-        }
-        console.log('aaa')
-
         return {...state,winner:winner}  
 
         default:

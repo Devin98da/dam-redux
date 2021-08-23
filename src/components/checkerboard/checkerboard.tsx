@@ -15,8 +15,8 @@ const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions);
     const winner = useSelector<RootState,WinnerState>(state => state.winner);
-    console.log(winner);
-    console.log(pieces);
+    // console.log(winner);
+    // console.log(pieces);
     const dispatch = useDispatch();
 
     const checkerBoardRef = useRef<HTMLDivElement>(null);
@@ -114,10 +114,9 @@ const Checkerboard = () => {
             const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
             const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
             dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces}})
-            dispatch({type:"CHOOSE_WINNER",payload:pieces});
+            dispatch({type:"CHOOSE_WINNER",payload:{pieces:pieces}});
         }
         setActivePiece(null);
-        console.log("Winner",winner);
     }
     const board = [];
 

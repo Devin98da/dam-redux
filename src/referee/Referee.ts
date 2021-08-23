@@ -63,7 +63,6 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                             // setQueenPieces(topRightPieces);
                             // const exMovPieces=[];
                             // exMovPieces.push(topRightPieces);
-                            console.log(topRightPieces);
                             // console.log(queenPieces);
                             
                             // console.log(exMovPieces);

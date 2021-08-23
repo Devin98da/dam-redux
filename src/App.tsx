@@ -1,11 +1,12 @@
-import React from 'react';
 import './App.css';
 import Checkerboard from './components/checkerboard/checkerboard';
-
+import Winner from './winner/Winner';
 
 function App() {
-  return (
+
+ return (
     <div className="App">
+      <Winner/>
       <Checkerboard/>
     </div>
   );
