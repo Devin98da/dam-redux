@@ -40,20 +40,22 @@ const initialState = {
     pieces: initialBoardState
 }
 
-interface DropAction  {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[]}};
-interface ResetAction {type:"RESET_PIECES"};
+interface DropAction  {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[],queenPieces:Piece[]}};
+interface ResetAction {type:"RESET_PIECES",payload:{pieces:Piece[]}};
 
 type Action = DropAction | ResetAction;
 
 const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
-    let updatedPieces:Piece[]=initialBoardState;
-  
+    // let updatedPieces:Piece[]=initialBoardState;
+    
     switch(action.type){
         
         case "DROP_PIECE":
             const drop = action.payload;
-            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces);
-            // let updatedPieces:Piece[]=initialBoardState;
+            // console.log(drop.queenPieces);
+
+            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,drop.queenPieces);
+            let updatedPieces:Piece[]=initialBoardState;
             if(validMove){
                     updatedPieces = drop.pieces.reduce((results,piece)=>{ 
                         const nearPiece = drop.nearPieces.find((ele:any)=>ele && ele.id===piece.id &&ele.player!==drop.currentPiece.player && Math.abs(drop.x-drop.currentPiece.x)!==1);
@@ -75,17 +77,48 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                         }
                         return results;
                     },[] as Piece[])
-            return {...state,pieces:updatedPieces};
+            // return {...state,pieces:updatedPieces};
             }else{
                 drop.activePiece.style.position='relative';
                 drop.activePiece.style.removeProperty('top');
                 drop.activePiece.style.removeProperty('left');
-                return {...state,pieces:updatedPieces};
+                // return {...state,pieces:updatedPieces};
             }
-        case "RESET_PIECES":
-            console.log("Reset checkerBoardReducer.tsx");
+            return {...state,pieces:updatedPieces};
 
-            return {...state,pieces:initialBoardState};
+        case "RESET_PIECES":
+            // console.log("Reset checkerBoardReducer.tsx");
+            let boardState:Piece[]=[];
+            for(let i=0;i<8;i++){
+                if(i%2!==0){
+            
+                    boardState.push({image:'Images/red_circle.png',x:i,y:7,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*2+'a')});
+                    boardState.push({image:'Images/red_circle.png',x:i,y:5,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*5+'b')});
+                }
+                
+            }
+            for(let i=0;i<8;i++){
+                if(i%2===0){
+                    boardState.push({image:'Images/red_circle.png',x:i,y:6,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*6+'c')});
+                }
+                
+            }
+            //!Blue Circles
+            for(let i=0;i<8;i++){
+                if(i%2===0){
+                    boardState.push({image:'Images/blue_circle.png',x:i,y:2,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*8+'d')});
+                    boardState.push({image:'Images/blue_circle.png',x:i,y:0,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*9+'e')});
+                }
+                
+            }
+            for(let i=0;i<8;i++){
+                if(i%2!==0){
+                    boardState.push({image:'Images/blue_circle.png',x:i,y:1,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*10+'f')});
+                }
+                
+            }
+            
+            return {...state,pieces:boardState};
         default:
             return {...state};
     }

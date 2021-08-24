@@ -6,8 +6,9 @@ export interface WinnerState {
 const InitialWinnerState = {
     winner:''
 }
-type Action = {type:"CHOOSE_WINNER",payload:{pieces:Piece[]}}
-
+type ChooseWinnerAction = {type:"CHOOSE_WINNER",payload:{pieces:Piece[]}}
+type ResetWinnerAction = {type:"RESET_WINNER"}
+type Action = ChooseWinnerAction|ResetWinnerAction;
 const WinnerReducer = (state:WinnerState=InitialWinnerState,action:Action) => {
     
     let winner:string='';
@@ -25,7 +26,9 @@ const WinnerReducer = (state:WinnerState=InitialWinnerState,action:Action) => {
                 }
             }
         return {...state,winner:winner}  
-
+        case "RESET_WINNER":
+            return {...state,winner:""}
+     
         default:
             return state;
     }

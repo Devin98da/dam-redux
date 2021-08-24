@@ -11,7 +11,7 @@ const CanMoveOnAnotherChecker = (x:number,y:number,boardstate:Piece[]):boolean =
     }
 }
 
-const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece,nearPieces:Piece[]) => {
+const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece,nearPieces:Piece[],queenPieces:Piece[]) => {
     
     if(currentPiece){
         // if(previousPlayer!==currentPiece?.player){
@@ -68,7 +68,12 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                             // console.log(exMovPieces);
                             // if(topRightPieces){
                                 // if(topRightPieces?.player===previousPlayer){
-                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
+                                    let qPiece;
+                                    if(queenPieces){
+                                         qPiece = queenPieces.find((p:any)=>p && p.player===currentPiece.player);
+                                        console.log("Q pieces",qPiece);
+                                    }
+                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i) ){
                                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){     
                                             return true;
                                         
