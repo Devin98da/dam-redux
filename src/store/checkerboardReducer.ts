@@ -6,17 +6,14 @@ const initialBoardState:Piece[]=[];
 //!RED Circles
 for(let i=0;i<8;i++){
     if(i%2!==0){
-
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:7,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*2+'a')});
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:5,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*5+'b')});
     }
-    
 }
 for(let i=0;i<8;i++){
     if(i%2===0){
         initialBoardState.push({image:'Images/red_circle.png',x:i,y:6,type:PieceTypes.NORMAL,player:PlayerType.RED,id:(i*6+'c')});
     }
-    
 }
 //!Blue Circles
 for(let i=0;i<8;i++){
@@ -24,7 +21,6 @@ for(let i=0;i<8;i++){
         initialBoardState.push({image:'Images/blue_circle.png',x:i,y:2,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*8+'d')});
         initialBoardState.push({image:'Images/blue_circle.png',x:i,y:0,type:PieceTypes.NORMAL,player:PlayerType.BLUE,id:(i*9+'e')});
     }
-    
 }
 for(let i=0;i<8;i++){
     if(i%2!==0){
@@ -52,13 +48,15 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
         
         case "DROP_PIECE":
             const drop = action.payload;
-            // console.log(drop.queenPieces);
 
             const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,drop.queenPieces);
             let updatedPieces:Piece[]=initialBoardState;
             if(validMove){
                     updatedPieces = drop.pieces.reduce((results,piece)=>{ 
-                        const nearPiece = drop.nearPieces.find((ele:any)=>ele && ele.id===piece.id &&ele.player!==drop.currentPiece.player && Math.abs(drop.x-drop.currentPiece.x)!==1);
+                        
+                        const nearPiece = drop.nearPieces.find((ele:any)=>ele && ele.id===piece.id &&ele.player!==drop.currentPiece.player && Math.abs(drop.x-drop.gridX)!==1);
+                        const queenPiece = drop.queenPieces.find((ele:any)=>ele && ele.id===piece.id && ele.player!==drop.currentPiece.player);
+                        console.log("Queen piece",queenPiece)
                         if(piece.x===drop.currentPiece.x && piece.y===drop.currentPiece.y ){
                             piece.x=drop.x;
                             piece.y=drop.y;
@@ -72,22 +70,27 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                             }
                         results.push(piece);
                         }
-                        else if(!(nearPiece )){
-                            results.push(piece);
+                        else if(drop.currentPiece.type===PieceTypes.NORMAL){
+                            if(!(nearPiece )){
+                                results.push(piece);
+                            }
+                        }
+                        else if(drop.currentPiece.type===PieceTypes.QUEEN){
+                            if(!(queenPiece)){
+                                results.push(piece);
+                                console.log("Queen remove")
+                            }
                         }
                         return results;
                     },[] as Piece[])
-            // return {...state,pieces:updatedPieces};
             }else{
                 drop.activePiece.style.position='relative';
                 drop.activePiece.style.removeProperty('top');
                 drop.activePiece.style.removeProperty('left');
-                // return {...state,pieces:updatedPieces};
             }
             return {...state,pieces:updatedPieces};
 
         case "RESET_PIECES":
-            // console.log("Reset checkerBoardReducer.tsx");
             let boardState:Piece[]=[];
             for(let i=0;i<8;i++){
                 if(i%2!==0){
@@ -117,7 +120,6 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                 }
                 
             }
-            
             return {...state,pieces:boardState};
         default:
             return {...state};

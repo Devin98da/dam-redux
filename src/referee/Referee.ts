@@ -10,7 +10,19 @@ const CanMoveOnAnotherChecker = (x:number,y:number,boardstate:Piece[]):boolean =
         return false;
     }
 }
-
+//!CAn move over pieces for queen
+const CheckQueenMovements = (x:number,y:number,boardState:Piece[],currentPiece:Piece)=>{
+    for(let i=0;i<6;i++){
+        const piece = boardState.find(p=>p.x===x+i && p.y===y-i);
+        console.log("Piece",piece)
+        if(piece?.player===currentPiece.player){
+            return true;
+        }else{
+            return false;
+        }
+    }
+   
+}
 const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece,nearPieces:Piece[],queenPieces:Piece[]) => {
     
     if(currentPiece){
@@ -55,28 +67,18 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                     for(let i=1;i<8;i++){
                         // if(x > grabPosition.x && y > grabPosition.y) {
                             let topRightPassedPosition = {x:currentPiece.x+i , y:currentPiece.y+i};
-                            // if(topRightPassedPosition){
-                            //     console.log(topRightPassedPosition.x,topRightPassedPosition.y);
-                            // }
                             let topRightPieces = boardstate.find(p=>(p.x===topRightPassedPosition.x && p.y===topRightPassedPosition.y))
-                            // let topRightPieces = boardstate.filter(p=>(p.x===topRightPassedPosition.x && p.y===topRightPassedPosition.y))
-                            // setQueenPieces(topRightPieces);
-                            // const exMovPieces=[];
-                            // exMovPieces.push(topRightPieces);
-                            // console.log(queenPieces);
-                            
-                            // console.log(exMovPieces);
-                            // if(topRightPieces){
-                                // if(topRightPieces?.player===previousPlayer){
+                        
+                                    // console.log("before",px,py)
+                                    // console.log("after",x,y)
                                     let qPiece;
                                     if(queenPieces){
-                                         qPiece = queenPieces.find((p:any)=>p && p.player===currentPiece.player);
-                                        console.log("Q pieces",qPiece);
+                                        //  qPiece = queenPieces.find((p:any)=>p && p.player===currentPiece.player);
+                                        // console.log("Q piece",qPiece);
                                     }
-                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i) ){
-                                        if(!CanMoveOnAnotherChecker(x,y,boardstate) ){     
-                                            return true;
-                                        
+                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
+                                        if(!CanMoveOnAnotherChecker(x,y,boardstate)){  
+                                                    return true;
                                     }
                                 // }
                             }
