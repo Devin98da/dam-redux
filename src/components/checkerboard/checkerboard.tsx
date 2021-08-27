@@ -13,8 +13,7 @@ const verti:any = ["a","b","c","d","e","f","g","h"];
 const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions);
-    const prevPlayer = useSelector<RootState,PlayerType>(state=>state.previousPlayer.prevPlayer)
-    console.log(prevPlayer);
+    const prevPlayer = useSelector<RootState,PlayerType|null>(state=>state.previousPlayer.prevPlayer)
     const dispatch = useDispatch();
 
     const checkerBoardRef = useRef<HTMLDivElement>(null);
@@ -67,13 +66,9 @@ const Checkerboard = () => {
             element.style.position = "absolute";
             element.style.left=`${x}px`;
             element.style.top=`${y}px`;
-            // const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
-
-            // dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:currentPiece?.player})
             
             makeHighlights(gridX,gridY);
             setActivePiece(element);
-
         }
     };
 
@@ -111,22 +106,53 @@ const Checkerboard = () => {
     //!Dropping piece
     const dropPiece = (e:React.MouseEvent) => {
         const checkerBoard = checkerBoardRef.current;
-        
         const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
         
         if(activePiece && checkerBoard ){
             const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
             const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
-            // console.log("Prev Player",prevPlayer);
+           
             if(currentPiece?.x===x){
                 activePiece.style.position='relative';
                 activePiece.style.removeProperty('top');
                 activePiece.style.removeProperty('left');
             }else{
-                dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces,prevPlayer}})
+                console.log("Previous player",prevPlayer);
+                let qPieces:Piece[]=[];
+                
+                if(gridX && gridY){
+                
+                const change = Math.abs(x-gridX);
+                let a;
+                    for(let i=1;i<change;i++){
+                        if(x-gridX>0 && y-gridY>0){
+                            a =pieces.find((p:any)=> p.x===gridX+i && p.y===gridY+i) ;
+                                if(a){
+                                    qPieces.push(a);
+                                                        }
+                        }else if(x-gridX<0 && y-gridY<0){
+                            a =pieces.find((p:any)=> p.x===gridX-i && p.y===gridY-i) ;
+                                if(a){
+                                    qPieces.push(a);
+                                }
+                        }else if(x-gridX<0 && y-gridY>0){
+                            a =pieces.find((p:any)=> p.x===gridX-i && p.y===gridY+i) ;
+                                if(a){
+                                    qPieces.push(a);
+                                }
+                        }else if(x-gridX>0 && y-gridY<0){
+                            a =pieces.find((p:any)=> p.x===gridX+i && p.y===gridY-i) ;
+                                if(a){
+                                    qPieces.push(a);
+                                }
+                        }
+                                                    
+                    }
+                }
+                dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces,prevPlayer,qPieces}})
+                dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:{currentPiece,gridX,qPieces}});
             }            
             dispatch({type:"CHOOSE_WINNER",payload:{pieces:pieces}});
-            dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:currentPiece?.player})
         }
         setActivePiece(null);
     }

@@ -21,12 +21,12 @@ const Referee = (
     currentPiece:Piece,
     nearPieces:Piece[],
     queenPieces:Piece[],
-    previousPlayer:PlayerType
+    prevPlayer:PlayerType
     ) => {
     
     if(currentPiece){
-        console.log(previousPlayer)
-        if(previousPlayer!==currentPiece?.player){
+        console.log("Preious player referee",prevPlayer)
+        if(prevPlayer!==currentPiece?.player){
             const checkerDirection = (player===PlayerType.BLUE)?1:-1;
             if(type===PieceTypes.NORMAL){
                 if(py<=8 && py>=0){
@@ -35,27 +35,18 @@ const Referee = (
                             return true;
                     }
                     }else if(x-px===2 && y-py===2 && nearPieces[1]&& nearPieces[1].player!==currentPiece.player){
-
-                        console.log("rihht attack");
-    
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
                                 return true;
                             }
                     }else if(x-px===-2 && y-py===2 && nearPieces[0]&& nearPieces[0].player!==currentPiece.player){
-
-                        console.log("left attack");
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
                                 return true;
                             }
                     }else if(x-px===-2 && y-py===-2 && nearPieces[2]&& nearPieces[2].player!==currentPiece.player){
-
-                        console.log("bottom left attack");
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
                                 return true;
                             }
                     }else if(x-px===2 && y-py===-2 && nearPieces[3]&& nearPieces[3].player!==currentPiece.player){
-                        console.log("bottom right attack");
-    
                         if(!CanMoveOnAnotherChecker(x,y,boardstate) ){
                                 return true;
                             }
@@ -65,7 +56,6 @@ const Referee = (
             }else{
                 if(py<=8 && py>=0){
                     for(let i=1;i<8;i++){
-                        // if(x > grabPosition.x && y > grabPosition.y) {
                         const queenPiece = queenPieces.find((ele:any)=>ele && ele.player===currentPiece.player);
 
                         if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){

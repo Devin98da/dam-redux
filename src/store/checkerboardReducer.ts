@@ -28,37 +28,37 @@ for(let i=0;i<8;i++){
     }
     
 }
- //!Check quenn passed pieces
- const CheckQueenPassedPieces = (x:number,y:number,px:number,py:number,boardstate:Piece[]) => {
-    const change = Math.abs(x-px);
-    let qPieces:Piece[]=[];
-    let a;
-    for(let i=1;i<change;i++){
-        if(x-px>0 && y-py>0){
-            a =boardstate.find((p:any)=> p.x===px+i && p.y===py+i) ;
-                if(a){
-                    qPieces.push(a);
-                                        }
-        }else if(x-px<0 && y-py<0){
-            a =boardstate.find((p:any)=> p.x===px-i && p.y===py-i) ;
-                if(a){
-                    qPieces.push(a);
-                }
-        }else if(x-px<0 && y-py>0){
-            a =boardstate.find((p:any)=> p.x===px-i && p.y===py+i) ;
-                if(a){
-                    qPieces.push(a);
-                }
-        }else if(x-px>0 && y-py<0){
-            a =boardstate.find((p:any)=> p.x===px+i && p.y===py-i) ;
-                if(a){
-                    qPieces.push(a);
-                }
-        }
+//  //!Check quenn passed pieces
+//  const CheckQueenPassedPieces = (x:number,y:number,px:number,py:number,boardstate:Piece[]) => {
+//     const change = Math.abs(x-px);
+//     let qPieces:Piece[]=[];
+//     let a;
+//     for(let i=1;i<change;i++){
+//         if(x-px>0 && y-py>0){
+//             a =boardstate.find((p:any)=> p.x===px+i && p.y===py+i) ;
+//                 if(a){
+//                     qPieces.push(a);
+//                                         }
+//         }else if(x-px<0 && y-py<0){
+//             a =boardstate.find((p:any)=> p.x===px-i && p.y===py-i) ;
+//                 if(a){
+//                     qPieces.push(a);
+//                 }
+//         }else if(x-px<0 && y-py>0){
+//             a =boardstate.find((p:any)=> p.x===px-i && p.y===py+i) ;
+//                 if(a){
+//                     qPieces.push(a);
+//                 }
+//         }else if(x-px>0 && y-py<0){
+//             a =boardstate.find((p:any)=> p.x===px+i && p.y===py-i) ;
+//                 if(a){
+//                     qPieces.push(a);
+//                 }
+//         }
                                     
-    }
-    return qPieces;
-}
+//     }
+//     return qPieces;
+// }
 export interface PiecesState{
     pieces:Piece[]
 }
@@ -67,27 +67,31 @@ const initialState = {
 }
 
 interface DropAction  {type:"DROP_PIECE",payload:{
-    currentPiece:Piece
-    ,pieces:Piece[],
+    currentPiece:Piece,
+    pieces:Piece[],
     gridX:number,
     gridY:number,
     x:number,
     y:number,
     activePiece:HTMLElement,
     nearPieces:Piece[],
-    previousPlayer:PlayerType
+    prevPlayer:PlayerType,
+    qPieces:Piece[]
 }};
 interface ResetAction {type:"RESET_PIECES",payload:{pieces:Piece[]}};
 
 type Action = DropAction | ResetAction;
 
 const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
-
+    
     switch(action.type){
         case "DROP_PIECE":
             const drop = action.payload;
-            const qPieces = CheckQueenPassedPieces(drop.x,drop.y,drop.gridX,drop.gridY,drop.pieces);
-            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,qPieces,drop.previousPlayer);
+            // console.log("Checekrboard reducer",drop);
+            // const qPieces = CheckQueenPassedPieces(drop.x,drop.y,drop.gridX,drop.gridY,drop.pieces);
+            const qPieces = drop.qPieces;
+
+            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,qPieces,drop.prevPlayer);
             let updatedPieces:Piece[]=initialBoardState;
             
             if(validMove){
@@ -126,8 +130,8 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                 drop.activePiece.style.position='relative';
                 drop.activePiece.style.removeProperty('top');
                 drop.activePiece.style.removeProperty('left');
-
-            }
+                return {...state}
+            }   
             return {...state,pieces:updatedPieces};
 
         case "RESET_PIECES":
