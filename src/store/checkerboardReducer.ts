@@ -28,7 +28,37 @@ for(let i=0;i<8;i++){
     }
     
 }
-
+ //!Check quenn passed pieces
+ const CheckQueenPassedPieces = (x:number,y:number,px:number,py:number,boardstate:Piece[]) => {
+    const change = Math.abs(x-px);
+    let qPieces:Piece[]=[];
+    let a;
+    for(let i=1;i<change;i++){
+        if(x-px>0 && y-py>0){
+            a =boardstate.find((p:any)=> p.x===px+i && p.y===py+i) ;
+                if(a){
+                    qPieces.push(a);
+                                        }
+        }else if(x-px<0 && y-py<0){
+            a =boardstate.find((p:any)=> p.x===px-i && p.y===py-i) ;
+                if(a){
+                    qPieces.push(a);
+                }
+        }else if(x-px<0 && y-py>0){
+            a =boardstate.find((p:any)=> p.x===px-i && p.y===py+i) ;
+                if(a){
+                    qPieces.push(a);
+                }
+        }else if(x-px>0 && y-py<0){
+            a =boardstate.find((p:any)=> p.x===px+i && p.y===py-i) ;
+                if(a){
+                    qPieces.push(a);
+                }
+        }
+                                    
+    }
+    return qPieces;
+}
 export interface PiecesState{
     pieces:Piece[]
 }
@@ -36,57 +66,67 @@ const initialState = {
     pieces: initialBoardState
 }
 
-interface DropAction  {type:"DROP_PIECE",payload:{currentPiece:Piece,pieces:Piece[],gridX:number,gridY:number,x:number,y:number,activePiece:HTMLElement,nearPieces:Piece[],queenPieces:Piece[]}};
+interface DropAction  {type:"DROP_PIECE",payload:{
+    currentPiece:Piece
+    ,pieces:Piece[],
+    gridX:number,
+    gridY:number,
+    x:number,
+    y:number,
+    activePiece:HTMLElement,
+    nearPieces:Piece[],
+    previousPlayer:PlayerType
+}};
 interface ResetAction {type:"RESET_PIECES",payload:{pieces:Piece[]}};
 
 type Action = DropAction | ResetAction;
 
 const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
-    // let updatedPieces:Piece[]=initialBoardState;
-    
+
     switch(action.type){
-        
         case "DROP_PIECE":
             const drop = action.payload;
-
-            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,drop.queenPieces);
+            const qPieces = CheckQueenPassedPieces(drop.x,drop.y,drop.gridX,drop.gridY,drop.pieces);
+            const validMove = Referee(drop.gridX,drop.gridY,drop.x,drop.y,drop.currentPiece.type,drop.currentPiece.player,drop.pieces,drop.currentPiece,drop.nearPieces,qPieces,drop.previousPlayer);
             let updatedPieces:Piece[]=initialBoardState;
+            
             if(validMove){
-                    updatedPieces = drop.pieces.reduce((results,piece)=>{ 
-                        
-                        const nearPiece = drop.nearPieces.find((ele:any)=>ele && ele.id===piece.id &&ele.player!==drop.currentPiece.player && Math.abs(drop.x-drop.gridX)!==1);
-                        const queenPiece = drop.queenPieces.find((ele:any)=>ele && ele.id===piece.id && ele.player!==drop.currentPiece.player);
-                        console.log("Queen piece",queenPiece)
-                        if(piece.x===drop.currentPiece.x && piece.y===drop.currentPiece.y ){
-                            piece.x=drop.x;
-                            piece.y=drop.y;
-                            if((drop.currentPiece.y===7 && drop.currentPiece.player===PlayerType.BLUE) || (drop.currentPiece.y===0 && drop.currentPiece.player===PlayerType.RED) ){
-                                drop.currentPiece.type=PieceTypes.QUEEN;
-                                if(drop.currentPiece.player===PlayerType.BLUE){
-                                    drop.currentPiece.image="Images/blue_queen.png";
-                                }else{
-                                    drop.currentPiece.image="Images/red_queen.png";
-                                }
+                updatedPieces = drop.pieces.reduce((results,piece)=>{ 
+                
+                const queenPiece = qPieces.find((ele:any)=>ele && ele.id===piece.id && ele.player!==drop.currentPiece.player);
+
+                if(piece.x===drop.currentPiece.x && piece.y===drop.currentPiece.y ){
+                    piece.x=drop.x;
+                    piece.y=drop.y;
+                    
+                    if((drop.currentPiece.y===7 && drop.currentPiece.player===PlayerType.BLUE) || (drop.currentPiece.y===0 && drop.currentPiece.player===PlayerType.RED) ){
+                        drop.currentPiece.type=PieceTypes.QUEEN;
+                        if(drop.currentPiece.player===PlayerType.BLUE){
+                            drop.currentPiece.image="Images/blue_queen.png";
+                        }else{
+                            drop.currentPiece.image="Images/red_queen.png";
                             }
+                        }
+                    results.push(piece);
+                }
+                else if(drop.currentPiece.type===PieceTypes.NORMAL){
+                    if(!(queenPiece )){
                         results.push(piece);
                         }
-                        else if(drop.currentPiece.type===PieceTypes.NORMAL){
-                            if(!(nearPiece )){
-                                results.push(piece);
-                            }
+                    }
+                    else if(drop.currentPiece.type===PieceTypes.QUEEN){
+                        if(!(queenPiece)){
+                            results.push(piece);
+                            console.log("Queen remove")
                         }
-                        else if(drop.currentPiece.type===PieceTypes.QUEEN){
-                            if(!(queenPiece)){
-                                results.push(piece);
-                                console.log("Queen remove")
-                            }
-                        }
-                        return results;
-                    },[] as Piece[])
+                    }
+                    return results;
+                },[] as Piece[])         
             }else{
                 drop.activePiece.style.position='relative';
                 drop.activePiece.style.removeProperty('top');
                 drop.activePiece.style.removeProperty('left');
+
             }
             return {...state,pieces:updatedPieces};
 

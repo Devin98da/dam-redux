@@ -10,23 +10,23 @@ const CanMoveOnAnotherChecker = (x:number,y:number,boardstate:Piece[]):boolean =
         return false;
     }
 }
-//!CAn move over pieces for queen
-const CheckQueenMovements = (x:number,y:number,boardState:Piece[],currentPiece:Piece)=>{
-    for(let i=0;i<6;i++){
-        const piece = boardState.find(p=>p.x===x+i && p.y===y-i);
-        console.log("Piece",piece)
-        if(piece?.player===currentPiece.player){
-            return true;
-        }else{
-            return false;
-        }
-    }
-   
-}
-const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:PlayerType,boardstate:Piece[],currentPiece:Piece,nearPieces:Piece[],queenPieces:Piece[]) => {
+const Referee = (
+    px:number,
+    py:number,
+    x:number,
+    y:number,
+    type:PieceTypes,
+    player:PlayerType,
+    boardstate:Piece[],
+    currentPiece:Piece,
+    nearPieces:Piece[],
+    queenPieces:Piece[],
+    previousPlayer:PlayerType
+    ) => {
     
     if(currentPiece){
-        // if(previousPlayer!==currentPiece?.player){
+        console.log(previousPlayer)
+        if(previousPlayer!==currentPiece?.player){
             const checkerDirection = (player===PlayerType.BLUE)?1:-1;
             if(type===PieceTypes.NORMAL){
                 if(py<=8 && py>=0){
@@ -66,26 +66,23 @@ const Referee = (px:number,py:number,x:number,y:number,type:PieceTypes,player:Pl
                 if(py<=8 && py>=0){
                     for(let i=1;i<8;i++){
                         // if(x > grabPosition.x && y > grabPosition.y) {
-                            let topRightPassedPosition = {x:currentPiece.x+i , y:currentPiece.y+i};
-                            let topRightPieces = boardstate.find(p=>(p.x===topRightPassedPosition.x && p.y===topRightPassedPosition.y))
-                        
-                                    // console.log("before",px,py)
-                                    // console.log("after",x,y)
-                                    let qPiece;
-                                    if(queenPieces){
-                                        //  qPiece = queenPieces.find((p:any)=>p && p.player===currentPiece.player);
-                                        // console.log("Q piece",qPiece);
+                        const queenPiece = queenPieces.find((ele:any)=>ele && ele.player===currentPiece.player);
+
+                        if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
+                            if(!CanMoveOnAnotherChecker(x,y,boardstate)){  
+                                if(queenPieces.length===1 || queenPieces.length===0 ){
+                                    if(queenPiece){
+                                        return false;
+                                    }else{
+                                        return true;
                                     }
-                                    if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
-                                        if(!CanMoveOnAnotherChecker(x,y,boardstate)){  
-                                                    return true;
-                                    }
-                                // }
+                                }
                             }
-                        // }
+                        }
                     }
                 }
             }
+        }
     }
 }
 

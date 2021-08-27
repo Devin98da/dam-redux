@@ -3,11 +3,9 @@ import Tile from '../../tile/tile';
 import { useSelector,useDispatch } from 'react-redux';
 import './checkerboard.css';
 import { RootState } from '../../store';
-import {Piece,PlayerType,PieceTypes, Position} from '../../type';
+import {Piece,PlayerType} from '../../type';
 import { HighlightsState } from '../../store/highlightsReducer';
-import { PiecesState } from '../../store/checkerboardReducer';
-import { WinnerState } from '../../store/winner';
-import Referee from '../../referee/Referee';
+
 
 const hori:any = ["1","2","3","4","5","6","7","8"];
 const verti:any = ["a","b","c","d","e","f","g","h"];
@@ -15,21 +13,18 @@ const verti:any = ["a","b","c","d","e","f","g","h"];
 const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions);
-    const winner = useSelector<RootState,WinnerState>(state => state.winner);
-    // console.log(winner);
-    // console.log(pieces);
+    const prevPlayer = useSelector<RootState,PlayerType>(state=>state.previousPlayer.prevPlayer)
+    console.log(prevPlayer);
     const dispatch = useDispatch();
 
     const checkerBoardRef = useRef<HTMLDivElement>(null);
     const [gridX,setGridX] = useState<number|null>(null);
     const [gridY,setGridY] = useState<number|null>(null);
     const [nearPieces,setNearPieces] = useState<any>([]);
-    const [queenPieces,setQueenPieces] = useState<any>([]);
-
     const [activePiece,setActivePiece] = useState<HTMLElement|null>(null);
     //!Checke near pieces
     const NearPieces = (currentPiece:Piece) => {
-        const checkerDirection = (currentPiece?.player===PlayerType.BLUE)?1:-1;
+        // const checkerDirection = (currentPiece?.player===PlayerType.BLUE)?1:-1;
     
         const fPieces = [[-1,1],[1,1],[-1,-1],[1,-1]];
         let nearPiecesPositions:any = [];
@@ -44,40 +39,10 @@ const Checkerboard = () => {
                 nPieces.push(p);
                 }
             }
-        // console.log("Near Pieces",nPieces);
         if(nPieces){
             setNearPieces(nPieces);
         }
 
-        const qPieces = [
-            [1,1],[2,2],[3,3],[4,4],[5,5],[6,6],
-            [-1,1],[-2,2],[-3,3],[-4,4],[-5,5],[-6,6],
-            [-1,-1],[-2,-2],[-3,-3],[-4,-4],[-5,-5],[-6,-6],
-            [1,-1],[2,-2],[3,-3],[4,-4],[5,-5],[6,-6]
-
-        ];
-        let nearQueenPositions:any = [];
-        let b:number[];
-        let queenPieces = [];
-        let piece;
-        if(currentPiece.type===PieceTypes.QUEEN){
-            for(let i=0;i<qPieces.length;i++){
-                if(currentPiece){
-                    b = [qPieces[i][0]+currentPiece.x,qPieces[i][1]+currentPiece.y];
-                    
-                    nearQueenPositions.push(b);
-                    piece= pieces.find(p=>p.x===nearQueenPositions[i][0] && p.y===nearQueenPositions[i][1]);
-                    // if(piece){
-                        queenPieces.push(piece);
-                    // }
-                }
-            }
-            console.log("Queen Pieces positions,",nearQueenPositions);
-            console.log("Queen Pieces ,",queenPieces);
-            if(queenPieces){
-                setQueenPieces(queenPieces);
-            }
-        }
     }
     //!Making positions highlights
     const makeHighlights = (gridX:number,gridY:number) => {
@@ -102,6 +67,9 @@ const Checkerboard = () => {
             element.style.position = "absolute";
             element.style.left=`${x}px`;
             element.style.top=`${y}px`;
+            // const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
+
+            // dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:currentPiece?.player})
             
             makeHighlights(gridX,gridY);
             setActivePiece(element);
@@ -139,25 +107,26 @@ const Checkerboard = () => {
             }
         }
     }
+   
     //!Dropping piece
     const dropPiece = (e:React.MouseEvent) => {
         const checkerBoard = checkerBoardRef.current;
-    
+        
         const currentPiece = pieces.find(p=>p.x===gridX && p.y===gridY);
+        
         if(activePiece && checkerBoard ){
             const x = Math.floor((e.clientX - checkerBoard.offsetLeft)/80);
             const y = Math.abs(Math.ceil((e.clientY - checkerBoard.offsetTop-640)/80));
-            
-
+            // console.log("Prev Player",prevPlayer);
             if(currentPiece?.x===x){
                 activePiece.style.position='relative';
                 activePiece.style.removeProperty('top');
                 activePiece.style.removeProperty('left');
             }else{
-                dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces,queenPieces}})
-            }
-            // dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces}})
+                dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces,prevPlayer}})
+            }            
             dispatch({type:"CHOOSE_WINNER",payload:{pieces:pieces}});
+            dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:currentPiece?.player})
         }
         setActivePiece(null);
     }
