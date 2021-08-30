@@ -57,11 +57,11 @@ const Referee = (
                 if(py<=8 && py>=0){
                     for(let i=1;i<8;i++){
                         const queenPiece = queenPieces.find((ele:any)=>ele && ele.player===currentPiece.player);
-
+                        console.log(queenPieces)
                         if((y-py===i || y-py===-i) && (x-px===i || x-px===-i)){
                             if(!CanMoveOnAnotherChecker(x,y,boardstate)){  
                                 if(queenPieces.length===1 || queenPieces.length===0 ){
-                                    if(queenPiece){
+                                    if(queenPiece?.player===currentPiece.player){
                                         return false;
                                     }else{
                                         return true;

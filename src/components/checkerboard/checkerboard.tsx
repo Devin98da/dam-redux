@@ -13,7 +13,7 @@ const verti:any = ["a","b","c","d","e","f","g","h"];
 const Checkerboard = () => {
     const pieces = useSelector<RootState,Piece[]>(state => state.checkerboard.pieces);
     const highlights = useSelector<RootState,HighlightsState["positions"]>(state => state.highlights.positions);
-    const prevPlayer = useSelector<RootState,PlayerType|null>(state=>state.previousPlayer.prevPlayer)
+    const prevPlayer = useSelector<RootState,PlayerType>(state=>state.previousPlayer.prevPlayer)
     const dispatch = useDispatch();
 
     const checkerBoardRef = useRef<HTMLDivElement>(null);
@@ -84,6 +84,8 @@ const Checkerboard = () => {
             const x = e.clientX - 50;
             const y = e.clientY - 50;
             activePiece.style.position = "absolute";
+            dispatch({type:"CHOOSE_WINNER",payload:{pieces:pieces}});
+            dispatch({type:"REMOVE_HIGHLIGHTS"});
        
             if(x<minX){
                 activePiece.style.left=`${minX}px`;
@@ -151,8 +153,8 @@ const Checkerboard = () => {
                 }
                 dispatch({type:"DROP_PIECE",payload:{currentPiece,pieces,gridX,gridY,x,y,activePiece,nearPieces,prevPlayer,qPieces}})
                 dispatch({type:"CHANGE_PREVIOUS_PLAYER",payload:{currentPiece,gridX,qPieces}});
+
             }            
-            dispatch({type:"CHOOSE_WINNER",payload:{pieces:pieces}});
         }
         setActivePiece(null);
     }

@@ -17,10 +17,10 @@ const WinnerReducer = (state:WinnerState=InitialWinnerState,action:Action) => {
             if(action.payload.pieces){
                 const blues = action.payload.pieces.filter((p:any)=>p.player===PlayerType.BLUE);
                 const reds = action.payload.pieces.filter((p:any)=>p.player===PlayerType.RED);
-                if(blues.length===0){
+                if(blues.length<1){
                     console.log("Red player won");
                     winner="Red"
-                }else if(reds.length===0){
+                }else if(reds.length<1){
                     console.log("Blue player won");
                     winner="Blue";
                 }

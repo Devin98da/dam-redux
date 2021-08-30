@@ -118,12 +118,11 @@ const CheckerboardReducer = (state:PiecesState=initialState,action:Action) => {
                         results.push(piece);
                         }
                     }
-                    else if(drop.currentPiece.type===PieceTypes.QUEEN){
-                        if(!(queenPiece)){
-                            results.push(piece);
-                            console.log("Queen remove")
-                        }
+                else if(drop.currentPiece.type===PieceTypes.QUEEN){
+                    if(!(queenPiece)){
+                        results.push(piece);
                     }
+                }
                     return results;
                 },[] as Piece[])         
             }else{

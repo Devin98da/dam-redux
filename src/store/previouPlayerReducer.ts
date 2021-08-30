@@ -1,11 +1,11 @@
 import {  PlayerType,Piece } from "../type";
 
 export interface PrevPlayerState{
-    prevPlayer:PlayerType|null
+    prevPlayer:PlayerType
 }
 
 const initialPreviousPlayerState:PrevPlayerState = {
-    prevPlayer:null
+    prevPlayer:PlayerType.RED
 }
 
 type Action = {type:"CHANGE_PREVIOUS_PLAYER",payload:{currentPiece:Piece,gridX:number,qPieces:Piece[]}}
